@@ -1,0 +1,15 @@
+{
+  "api_timeout": 30000,
+  "custom_property": "eyJvYnRfaW5mbyI6eyJlbnYiOjEsInN0YXJ0X3RpbWUiOjE3MzA0MjgyMDAsImVuZF90aW1lIjoxNzM1NjUzNjAwfSwicWEzIjp7ImFwaSI6Imh0dHBzOi8vbWh3cy5pbyIsIm5vdGlmeSI6IndzczovL21od3MuaW8ifX0=",
+  "json_ver": "1.0.2",
+  "mmr": "https://mmr.rebe.capcom.com",
+  "mtm": "https://mhws.io",
+  "mtms": "https://mtms.rebe.capcom.com",
+  "nkm": "https://nkm.rebe.capcom.com",
+  "revision": "00001",
+  "selector": "https://selector.gs.capcom.com",
+  "title": "EAR-B-WW",
+  "tmr": "https://mhws.io/v1/projects/earth-analysis-obt/topics/analysis-client-log:publish",
+  "wlt": "https://wlt.rebe.capcom.com",
+  "working_state": "alive"
+}

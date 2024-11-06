@@ -3,8 +3,9 @@
 #
 
 .idea/
-asserts/
-cert/
+build/
+# asserts/
+# cert/
 
 # Binaries for programs and plugins
 *.exe

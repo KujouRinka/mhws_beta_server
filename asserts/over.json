@@ -1,0 +1,13 @@
+{
+  "documents": [
+    {
+      "consent_type": "analysis",
+      "consent_version": 1,
+      "content_url": "https://hjm.rebe.capcom.com/consents/EAR-B-WW/analysis/1/zh-hans.json",
+      "required": true
+    }
+  ],
+  "language": "zh-hans",
+  "parent_documents": [],
+  "title_name": "Monster Hunter Wilds Beta test"
+}
