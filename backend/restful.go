@@ -13,9 +13,6 @@ import (
 
 const apiHost = "mhws.io"
 
-var upgrader = websocket.Upgrader{}
-var upgrader2 = websocket.Upgrader{}
-
 var apis = []func(r *gin.Engine){
 	registerSystemJson,
 	registerListPartyQos,
@@ -253,8 +250,9 @@ func registerInGame(r *gin.Engine) {
 
 func registerWssHandler(r *gin.Engine) {
 	r.GET("/ws", func(c *gin.Context) {
+		upgrader := websocket.Upgrader{}
 		c.Header("Sec-WebSocket-Protocol", "access_token")
-		ws, err := upgrader2.Upgrade(c.Writer, c.Request, c.Writer.Header())
+		ws, err := upgrader.Upgrade(c.Writer, c.Request, c.Writer.Header())
 		if err != nil {
 			c.JSON(400, gin.H{"error": err.Error()})
 		}
@@ -269,6 +267,7 @@ func registerWssHandler(r *gin.Engine) {
 	})
 
 	r.GET("/socket", func(c *gin.Context) {
+		upgrader := websocket.Upgrader{}
 		c.Header("Sec-WebSocket-Protocol", "access_token")
 		ws, err := upgrader.Upgrade(c.Writer, c.Request, c.Writer.Header())
 		if err != nil {
