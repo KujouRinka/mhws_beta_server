@@ -285,7 +285,7 @@ func registerWssHandler(r *gin.Engine) {
 		message2 := "\x85\x00\x02\x01\x01\x63\x00\x00\x00" + "FAKENAME"
 		err = ws.WriteMessage(websocket.BinaryMessage, []byte(message2))
 
-		for {
+		for i := 0; i < 8; i++ {
 			_, _, err = ws.ReadMessage()
 			if err != nil {
 				break
