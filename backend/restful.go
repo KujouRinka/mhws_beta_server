@@ -74,7 +74,8 @@ func registerV1Api(r *gin.Engine) {
 		}
 		c.JSON(200, m)
 	})
-	g.GET("/consent/documents/EAR-B-WW/:restriction/:lang/over", func(c *gin.Context) {
+	// bugfix:
+	g.GET("/consent/documents/EAR-B-WW/:restriction/:lang/:tail", func(c *gin.Context) {
 		m, err := filenameToMap("over.json")
 		if err != nil {
 			c.JSON(404, gin.H{"error": err.Error()})
