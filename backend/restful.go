@@ -39,6 +39,13 @@ func registerSystemJson(r *gin.Engine) {
 		}
 		c.JSON(200, m)
 	})
+	r.GET("/consents\EAR-B-WW\analysis\1\zh-hans.json", func(c *gin.Context) {
+		m, err := filenameToMap("system.json")
+		if err != nil {
+			c.JSON(400, gin.H{"error": err.Error()})
+		}
+		c.JSON(200, m)
+	})
 }
 
 func registerListPartyQos(r *gin.Engine) {
