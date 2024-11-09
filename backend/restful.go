@@ -1,9 +1,11 @@
 package backend
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"io"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -12,6 +14,9 @@ import (
 )
 
 const apiHost = "mhws.io"
+
+var userId = newUUID()
+var hunterId string
 
 var apis = []func(r *gin.Engine){
 	registerSystemJson,
@@ -33,11 +38,38 @@ func RegisterHandler() *gin.Engine {
 
 func registerSystemJson(r *gin.Engine) {
 	r.GET("/systems/EAR-B-WW/00001/system.json", func(c *gin.Context) {
-		m, err := filenameToMap("system.json")
+		data := SystemPkt{
+			ApiTimeout:   30000,
+			JsonVer:      "1.0.2",
+			MMR:          "https://mmr.rebe.capcom.com",
+			MTM:          "https://" + apiHost,
+			MTMs:         "https://mtms.rebe.capcom.com",
+			NKM:          "https://nkm.rebe.capcom.com",
+			Revision:     "00001",
+			Selector:     "https://selector.gs.capcom.com",
+			Title:        "EAR-B-WW",
+			TMR:          "https://" + apiHost + "/v1/projects/earth-analysis-obt/topics/analysis-client-log:publish",
+			WLT:          "https://wlt.rebe.capcom.com",
+			WorkingState: "alive",
+		}
+		cp := CustomProperty{
+			ObtInfo: &ObtInfo{
+				Env:       1,
+				StartTime: 1730428200, // UTC+8 2024-11-01 10:30:00
+				EndTime:   time.Now().Unix() + 114514,
+			},
+			QA3: &QA3{
+				Api:    "https://" + apiHost,
+				Notify: "wss://" + apiHost,
+			},
+		}
+		cpJsonByte, err := json.Marshal(cp)
 		if err != nil {
 			c.JSON(400, gin.H{"error": err.Error()})
 		}
-		c.JSON(200, m)
+		e := base64.StdEncoding.EncodeToString(cpJsonByte)
+		data.CustomProperty = e
+		c.JSON(200, data)
 	})
 	r.GET("/consents/EAR-B-WW/analysis/1/zh-hans.json", func(c *gin.Context) {
 		m, err := filenameToMap("zh-hans.json")
@@ -98,7 +130,6 @@ func registerV1Api(r *gin.Engine) {
 }
 
 // Character creation
-var userId = newUUID()
 
 func registerAuth(r *gin.Engine) {
 	g := r.Group("/auth")
@@ -120,7 +151,6 @@ func registerAuth(r *gin.Engine) {
 }
 
 // Hunter profile
-var hunterId string
 
 func registerOthers(r *gin.Engine) {
 	r.POST("/delivery_data/get", func(c *gin.Context) {

@@ -1,5 +1,37 @@
 package backend
 
+type SystemPkt struct {
+	ApiTimeout     int    `json:"api_timeout"`
+	CustomProperty string `json:"custom_property"`
+	JsonVer        string `json:"json_ver"`
+	MMR            string `json:"mmr"`
+	MTM            string `json:"mtm"`
+	MTMs           string `json:"mtms"`
+	NKM            string `json:"nkm"`
+	Revision       string `json:"revision"`
+	Selector       string `json:"selector"`
+	Title          string `json:"title"`
+	TMR            string `json:"tmr"`
+	WLT            string `json:"wlt"`
+	WorkingState   string `json:"working_state"`
+}
+
+type CustomProperty struct {
+	ObtInfo *ObtInfo `json:"obt_info"`
+	QA3     *QA3     `json:"qa3"`
+}
+
+type ObtInfo struct {
+	Env       int   `json:"env"`
+	StartTime int64 `json:"start_time"`
+	EndTime   int64 `json:"end_time"`
+}
+
+type QA3 struct {
+	Api    string `json:"api"`
+	Notify string `json:"notify"`
+}
+
 type AuthLogin struct {
 	SessionId        string `msgpack:"SessionId"`
 	UserId           string `msgpack:"UserId"`
