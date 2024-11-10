@@ -127,6 +127,13 @@ func registerV1Api(r *gin.Engine) {
 		}
 		c.JSON(200, m)
 	})
+	g.GET("/token/refresh/", func(c *gin.Context) {
+		m, err := filenameToMap("refresh.json")
+		if err != nil {
+			c.JSON(400, gin.H{"error": err.Error()})
+		}
+		c.JSON(200, m)
+	})
 }
 
 // Character creation
