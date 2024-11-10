@@ -4,8 +4,7 @@
 
 .idea/
 build/
-# asserts/
-# cert/
+cert/
 
 # Binaries for programs and plugins
 *.exe
