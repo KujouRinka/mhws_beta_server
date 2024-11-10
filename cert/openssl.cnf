@@ -1,0 +1,21 @@
+[ req ]
+default_bits       = 2048
+distinguished_name = req_distinguished_name
+req_extensions     = req_ext
+prompt             = no
+
+[ req_distinguished_name ]
+C  = CN
+ST = Beijing
+L  = Beijing
+O  = MyCompany
+OU = MyUnit
+CN = example.org  # 这里使用了 example.org
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = mhws.io
+DNS.2 = hjm.rebe.capcom.com
+DNS.3 = 40912.playfabapi.com
