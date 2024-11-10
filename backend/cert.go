@@ -8,19 +8,16 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	"fmt"
-	"log"
 	"math/big"
 	"os"
+	"path/filepath"
 	"time"
-)
 
-const (
-	rootCertFile = "root.crt"
-	rootKeyFile  = "root.key"
+	"github.com/kujourinka/mhws_beta_server/config"
 )
 
 // 生成自签名的根证书
-func generateSelfSignedCert() (*x509.Certificate, *rsa.PrivateKey, error) {
+func generateSelfSignedCert(rootCertFile, rootKeyFile string) (*x509.Certificate, *rsa.PrivateKey, error) {
 	// 生成私钥
 	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
@@ -63,11 +60,19 @@ func generateSelfSignedCert() (*x509.Certificate, *rsa.PrivateKey, error) {
 	})
 
 	// 保存证书到文件
+	dir := filepath.Dir(rootCertFile)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return nil, nil, fmt.Errorf("failed to create directory %s: %w", dir, err)
+	}
 	if err := os.WriteFile(rootCertFile, certPEM, 0644); err != nil {
 		return nil, nil, fmt.Errorf("failed to write certificate file: %w", err)
 	}
 
 	// 保存私钥到文件
+	dir = filepath.Dir(rootKeyFile)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return nil, nil, fmt.Errorf("failed to create directory %s: %w", dir, err)
+	}
 	if err := os.WriteFile(rootKeyFile, privateKeyPEM, 0600); err != nil {
 		return nil, nil, fmt.Errorf("failed to write private key file: %w", err)
 	}
@@ -76,7 +81,7 @@ func generateSelfSignedCert() (*x509.Certificate, *rsa.PrivateKey, error) {
 }
 
 // 读取根证书和私钥
-func loadRootCertAndKey() (*x509.Certificate, *rsa.PrivateKey, error) {
+func loadRootCertAndKey(rootCertFile, rootKeyFile string) (*x509.Certificate, *rsa.PrivateKey, error) {
 	// 读取证书文件
 	certBytes, err := os.ReadFile(rootCertFile)
 	if err != nil {
@@ -112,23 +117,23 @@ func loadRootCertAndKey() (*x509.Certificate, *rsa.PrivateKey, error) {
 	return cert, privateKey, nil
 }
 
-func GenerateDomainCert() (*tls.Certificate, error) {
+func GenerateDomainCert(cfg *config.Config) (*tls.Certificate, error) {
 
 	var rootCert *x509.Certificate
 	var rootPrivateKey *rsa.PrivateKey
 
 	// 检查根证书文件是否存在
-	if _, err := os.Stat(rootCertFile); os.IsNotExist(err) {
+	if _, err := os.Stat(cfg.RootCertFile); os.IsNotExist(err) {
 		// 生成自签名证书
-		rootCert, rootPrivateKey, err = generateSelfSignedCert()
+		rootCert, rootPrivateKey, err = generateSelfSignedCert(cfg.RootCertFile, cfg.RootKeyFile)
 		if err != nil {
-			log.Fatalf("Error generating self-signed certificate: %v", err)
+			return nil, fmt.Errorf("error generating self-signed certificate: %v", err)
 		}
 	} else {
 		// 读取根证书和私钥
-		rootCert, rootPrivateKey, err = loadRootCertAndKey()
+		rootCert, rootPrivateKey, err = loadRootCertAndKey(cfg.RootCertFile, cfg.RootKeyFile)
 		if err != nil {
-			log.Fatalf("Error loading root certificate and key: %v", err)
+			return nil, fmt.Errorf("error loading root certificate and key: %v", err)
 		}
 	}
 
@@ -142,9 +147,9 @@ func GenerateDomainCert() (*tls.Certificate, error) {
 		SerialNumber: big.NewInt(1658),
 		Subject: pkix.Name{
 			Country:            []string{"CN"},
-			Organization:       []string{"mimtproxy"},
+			Organization:       []string{"mitmproxy"},
 			OrganizationalUnit: []string{"IT Department"},
-			CommonName:         "example.com",
+			CommonName:         "mitmproxy",
 		},
 		NotBefore:             time.Now(),
 		NotAfter:              time.Now().AddDate(10, 0, 0),
@@ -152,7 +157,7 @@ func GenerateDomainCert() (*tls.Certificate, error) {
 		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
 		BasicConstraintsValid: true,
 		IsCA:                  false, // 子证书不是CA证书
-		DNSNames:              []string{"hjm.rebe.capcom.com", "mhws.io", "40912.playfabapi.com"},
+		DNSNames:              cfg.CertDomain,
 	}
 
 	// 用根证书和私钥签发子证书

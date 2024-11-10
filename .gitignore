@@ -4,8 +4,7 @@
 
 .idea/
 build/
-# asserts/
-# cert/
+cert/
 
 # Binaries for programs and plugins
 *.exe
@@ -29,6 +28,3 @@ go.work.sum
 
 # env file
 .env
-
-root.crt
-root.key

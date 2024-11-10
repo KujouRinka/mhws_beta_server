@@ -10,15 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
+	"github.com/kujourinka/mhws_beta_server/config"
 	"github.com/vmihailenco/msgpack/v5"
 )
-
-const apiHost = "mhws.io"
 
 var userId = newUUID()
 var hunterId string
 
-var apis = []func(r *gin.Engine){
+var apis = []func(r *gin.Engine, cfg *config.Config){
 	registerSystemJson,
 	registerListPartyQos,
 	registerV1Api,
@@ -28,27 +27,30 @@ var apis = []func(r *gin.Engine){
 	registerOthers,
 }
 
-func RegisterHandler() *gin.Engine {
+func RegisterHandler(cfg *config.Config) *gin.Engine {
 	r := gin.Default()
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{"message": "hello world"})
+	})
 	for _, api := range apis {
-		api(r)
+		api(r, cfg)
 	}
 	return r
 }
 
-func registerSystemJson(r *gin.Engine) {
+func registerSystemJson(r *gin.Engine, cfg *config.Config) {
 	r.GET("/systems/EAR-B-WW/00001/system.json", func(c *gin.Context) {
 		data := SystemPkt{
 			ApiTimeout:   30000,
 			JsonVer:      "1.0.2",
 			MMR:          "https://mmr.rebe.capcom.com",
-			MTM:          "https://" + apiHost,
+			MTM:          "https://" + cfg.ApiHost,
 			MTMs:         "https://mtms.rebe.capcom.com",
 			NKM:          "https://nkm.rebe.capcom.com",
 			Revision:     "00001",
 			Selector:     "https://selector.gs.capcom.com",
 			Title:        "EAR-B-WW",
-			TMR:          "https://" + apiHost + "/v1/projects/earth-analysis-obt/topics/analysis-client-log:publish",
+			TMR:          "https://" + cfg.ApiHost + "/v1/projects/earth-analysis-obt/topics/analysis-client-log:publish",
 			WLT:          "https://wlt.rebe.capcom.com",
 			WorkingState: "alive",
 		}
@@ -59,8 +61,8 @@ func registerSystemJson(r *gin.Engine) {
 				EndTime:   time.Now().Unix() + 114514,
 			},
 			QA3: &QA3{
-				Api:    "https://" + apiHost,
-				Notify: "wss://" + apiHost,
+				Api:    "https://" + cfg.ApiHost,
+				Notify: "wss://" + cfg.ApiHost,
 			},
 		}
 		cpJsonByte, err := json.Marshal(cp)
@@ -80,7 +82,7 @@ func registerSystemJson(r *gin.Engine) {
 	})
 }
 
-func registerListPartyQos(r *gin.Engine) {
+func registerListPartyQos(r *gin.Engine, cfg *config.Config) {
 	r.POST("/MultiplayerServer/ListPartyQosServers", func(c *gin.Context) {
 		m, err := filenameToMap("list_party_qos_servers.json")
 		if err != nil {
@@ -90,7 +92,7 @@ func registerListPartyQos(r *gin.Engine) {
 	})
 }
 
-func registerV1Api(r *gin.Engine) {
+func registerV1Api(r *gin.Engine, cfg *config.Config) {
 	g := r.Group("/v1")
 	g.POST("/steam-steam/sign/EAR-B-WW", func(c *gin.Context) {
 		m, err := filenameToMap("steam_sign_ear-b-ww.json")
@@ -138,7 +140,7 @@ func registerV1Api(r *gin.Engine) {
 
 // Character creation
 
-func registerAuth(r *gin.Engine) {
+func registerAuth(r *gin.Engine, cfg *config.Config) {
 	g := r.Group("/auth")
 
 	g.POST("/login", func(c *gin.Context) {
@@ -159,7 +161,7 @@ func registerAuth(r *gin.Engine) {
 
 // Hunter profile
 
-func registerOthers(r *gin.Engine) {
+func registerOthers(r *gin.Engine, cfg *config.Config) {
 	r.POST("/delivery_data/get", func(c *gin.Context) {
 		setRawHeader(c, "x-session-nonce", uuid.New().String())
 		c.File("asserts/delivery_data_get.bin")
@@ -212,11 +214,11 @@ func registerOthers(r *gin.Engine) {
 	})
 	hunterG.POST("/character_creation/upload", func(c *gin.Context) {
 		data := HunterUpload{
-			UploadUrl: "https://" + apiHost + "/character-creation/b9/" + userId,
+			UploadUrl: "https://" + cfg.ApiHost + "/character-creation/b9/" + userId,
 			SignedHeaders: []SignHeaders{
 				{
 					HeaderKey:    "Host",
-					HeaderValues: []string{apiHost},
+					HeaderValues: []string{cfg.ApiHost},
 				}, {
 					HeaderKey:    "Content-Length",
 					HeaderValues: []string{"3"},
@@ -227,11 +229,11 @@ func registerOthers(r *gin.Engine) {
 	})
 	hunterG.POST("/profile/update", func(c *gin.Context) {
 		data := HunterUpload{
-			UploadUrl: "https://" + apiHost + "/hunter-profile/dd/" + hunterId,
+			UploadUrl: "https://" + cfg.ApiHost + "/hunter-profile/dd/" + hunterId,
 			SignedHeaders: []SignHeaders{
 				{
 					HeaderKey:    "Host",
-					HeaderValues: []string{apiHost},
+					HeaderValues: []string{cfg.ApiHost},
 				}, {
 					HeaderKey:    "Content-Length",
 					HeaderValues: []string{"14113"},
@@ -258,7 +260,7 @@ func registerOthers(r *gin.Engine) {
 	})
 }
 
-func registerInGame(r *gin.Engine) {
+func registerInGame(r *gin.Engine, cfg *config.Config) {
 	r.POST("/follow/total_list", func(c *gin.Context) {
 		data := FollowTotalList{
 			FollowList:      []interface{}{},
@@ -287,12 +289,12 @@ func registerInGame(r *gin.Engine) {
 		setMsgPack(c, data)
 	})
 	r.POST("/lobby/auto_join", func(c *gin.Context) {
-		data := LobbyAutoJoin{Endpoints: []string{apiHost + ":443"}}
+		data := LobbyAutoJoin{Endpoints: []string{cfg.ApiHost + ":443"}}
 		setMsgPack(c, data)
 	})
 }
 
-func registerWssHandler(r *gin.Engine) {
+func registerWssHandler(r *gin.Engine, cfg *config.Config) {
 	r.GET("/ws", func(c *gin.Context) {
 		upgrader := websocket.Upgrader{}
 		c.Header("Sec-WebSocket-Protocol", "access_token")
