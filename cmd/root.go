@@ -68,6 +68,8 @@ func mainRun(cmd *cobra.Command, args []string) {
 		Handler: e,
 		TLSConfig: &tls.Config{
 			Certificates: []tls.Certificate{*subCert},
+			// Set maximal version to TLS 1.2, fix issue #9 (Error S9052)
+			MaxVersion: tls.VersionTLS12,
 		},
 	}
 	_ = server.ListenAndServeTLS("", "")
