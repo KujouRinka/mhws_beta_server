@@ -1,3 +1,20 @@
+马上荒野都要出了，我寻思有些第三者真的是闲的是。发言之前可以先思考一下自己说的是否彼此彼此。
+
+这就是个没什么技术含量的东西，太久没写东西练练手而已，在某些人口中跟个什么一样。
+
+本来出于礼节写个致歉，还真被某些人当成软柿子哈，大部分人都具有足够的逻辑思考出这件事各方的是非对错，但总有一两个思维能力欠缺还喜欢跳脸的小鬼存在，差不多得了。
+
+以下是原文
+
+## Apology
+Due to my oversight in code review, sensitive information was exposed, causing inconvenience and confusion for other developers. I apologize to the other developers, refer to [#3](https://github.com/KujouRinka/mhws_beta_server/issues/3) and [#4](https://github.com/KujouRinka/mhws_beta_server/pull/4).
+
+由于本人审查代码疏忽导致出现了敏感信息而给其他开发者造成了不便于困惑，在这里向其他开发者致歉，请参考 [#3](https://github.com/KujouRinka/mhws_beta_server/issues/3) 与 [#4](https://github.com/KujouRinka/mhws_beta_server/pull/4)
+
+I hope everyone can learn from my example and avoid making such stupid mistakes out of negligence.
+
+希望大家以我为戒，不要因为疏忽做出这么愚蠢的事
+
 在阁下阅读这篇说明前，请您牢记这次事件中**我有错在先**，但知错承认，无可厚非。在开始阅读下面的文字之前，请牢记上面这点，如果阁下认为下文语气，表现方式上让您感到不适，首先，我文字功底欠缺，还请您海涵；其次，请回想**我有错在先**这点。如果您仍然感到无法接受，那您在心里面骂我傻逼就行了。虽然在我的争取之下仍未获得当事人的谅解，但我会尽自己能力处理好善后。
 
 下面主要是这件事的详情与我的反省和感受。
