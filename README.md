@@ -119,3 +119,13 @@ TL;DR
 `Proxifier` + `mitmproxy` 只是本人用的方案，方便调试而已，实际用起来挺麻烦的，平常使用推荐 `Charles`
 
 最后，善用搜索！善用搜索！善用搜索！
+
+### Thanks
+[@atYuguo](https://github.com/atYuguo)
+
+[@EdLovecraft](https://github.com/EdLovecraft)
+
+[@Evilmass](https://github.com/Evilmass)
+
+[@pangliang](https://github.com/pangliang)
+
