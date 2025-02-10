@@ -3,6 +3,9 @@ Here’s a project simulating server requests for the Monster Hunter Wilds Beta 
 
 这是模拟 Monster Hunter Wilds Beta test 版本服务器请求的项目。
 
+> [!NOTE]  
+> This project is intended for OBT1, and there are currently no plans to update it for OBT2. If you want to use it for the latter, please refer to [WiseHorror/mhws_beta_server](https://github.com/WiseHorror/mhws_beta_server).
+
 ### Disclaimer
 This project is intended solely for educational and learning purposes and must not be used for commercial purposes. Please delete this software within 24 hours of downloading. We do not take any responsibility for any illegal usage or distribution of this software.
 
